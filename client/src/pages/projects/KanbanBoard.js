@@ -165,8 +165,14 @@ export default function KanbanBoard() {
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 8 } }));
 
   useEffect(() => {
-    Promise.all([api.get(`/projects/${id}`), api.get(`/tasks?project=${id}`), api.get('/auth/users')]).then(([p, t, u]) => {
-      setProject(p.data); setTasks(t.data); setUsers(u.data);
+Promise.all([
+      api.get(`/projects/${id}`),
+      api.get(`/tasks?project=${id}`),
+      api.get(`/projects/${id}/users`),
+    ]).then(([p, t, u]) => {
+      setProject(p.data);
+      setTasks(t.data);
+      setUsers(u.data);
     }).finally(() => setLoading(false));
   }, [id]);
 

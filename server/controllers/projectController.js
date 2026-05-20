@@ -100,3 +100,40 @@ exports.removeMember = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
+exports.getProjectUsers = async (req, res) => {
+  try {
+    const project = await Project.findById(req.params.id).populate('members.user', 'name email avatar role')
+      .populate('owner', 'name email avatar role');
+
+    if (!project) return res.status(404).json({ message: 'Project not found' });
+
+    const isMember = project.owner._id.equals(req.user._id) || project.members.some(m => m.user._id.equals(req.user._id));
+    if (!isMember) return res.status(403).json({ message: 'Access denied' });
+
+    const users = [
+      { _id: project.owner._id, name: project.owner.name, email: project.owner.email, avatar: project.owner.avatar, role: project.owner.role },
+      ...project.members.map(m => ({
+        _id: m.user._id,
+        name: m.user.name,
+        email: m.user.email,
+        avatar: m.user.avatar,
+        role: m.user.role,
+      }))
+    ];
+
+    // De-dup (in case owner is also in members array)
+    const seen = new Set();
+    const unique = users.filter(u => {
+      const key = String(u._id);
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+
+    res.json(unique);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+

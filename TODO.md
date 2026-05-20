@@ -1,7 +1,12 @@
-# Task TODO: Fix account creation issue
+# TaskFlow - TODO
 
-- [x] Update server JWT handling in `server/controllers/authController.js` to fail fast with clear errors when `JWT_SECRET` is missing and to provide a default for `JWT_EXPIRE`.
+## Deploy readiness / feature fixes
+- [x] Update frontend API baseURL for Render deployment (`client/src/utils/api.js`).
+- [x] Verify seed logic in `server/seed.js` and run seed locally.
+- [ ] Update Kanban admin task assignee list to show only members of the selected project.
+  - [x] Add backend endpoint `GET /api/projects/:id/users`.
+  - [x] Update `client/src/pages/projects/KanbanBoard.js` to use the new endpoint.
+  - [ ] Push changes to GitHub.
 
-- [ ] Ensure registration/login responses remain consistent.
-- [ ] Run quick server start (or unit check) to ensure no syntax errors.
+
 
